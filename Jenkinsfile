@@ -2,69 +2,59 @@ pipeline {
     agent any
 
     environment {
-        ANDROID_HOME = "/home/ubuntu/android-sdk"
         JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64"
+        ANDROID_HOME = "/home/ubuntu/android-sdk"
         GRADLE_HOME = "/opt/gradle/gradle-8.5"
-        PATH = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${PATH}"
+        PATH+EXTRA = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${JAVA_HOME}/bin:${GRADLE_HOME}/bin"
     }
 
     stages {
-        stage('Environment Check') {
+
+        stage('Checkout SCM') {
             steps {
-                sh '''
-                    echo "=== Environment Variables ==="
-                    echo "Java version:"
-                    java -version
-                    echo "Android SDK path: $ANDROID_HOME"
-                    echo "PATH: $PATH"
-                    echo "sdk.dir=$ANDROID_HOME" > local.properties
-                '''
+                echo "== Checking out source code =="
+                checkout scm
             }
         }
 
-        stage('Checkout') {
+        stage('Environment Check') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/master']],
-                    extensions: [],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/girisettyramakrishna/jenkinsandroid.git',
-                        credentialsId: ''
-                    ]]
-                ])
-                sh 'chmod +x gradlew'
+                echo "== Environment Variables =="
+                sh 'java -version'
+                sh 'gradle -v'
+                sh 'echo $PATH'
+                sh 'ls $ANDROID_HOME'
             }
         }
 
         stage('Clean') {
             steps {
+                echo "== Cleaning project =="
                 sh './gradlew clean'
             }
         }
 
         stage('Build Debug APK') {
             steps {
-                sh './gradlew assembleDebug --stacktrace --no-daemon'
+                echo "== Building APK =="
+                sh './gradlew assembleDebug'
             }
         }
 
         stage('Archive APK') {
             steps {
-                archiveArtifacts artifacts: 'app/build/outputs/apk/**/*.apk', allowEmptyArchive: true
+                echo "== Archiving APK =="
+                archiveArtifacts artifacts: '**/app/build/outputs/apk/debug/*.apk', fingerprint: true
             }
         }
     }
 
     post {
-        success {
-            echo 'Build succeeded!'
-        }
         failure {
-            echo 'Build failed!'
+            echo '❌ Build failed.'
         }
-        always {
-            cleanWs()
+        success {
+            echo '✅ Build succeeded.'
         }
     }
 }
