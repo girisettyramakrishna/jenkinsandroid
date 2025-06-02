@@ -3,68 +3,43 @@ pipeline {
 
     environment {
         ANDROID_HOME = "/home/ubuntu/android-sdk"
-        PATH+ANDROID = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
+        JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64"
+        GRADLE_HOME = "/opt/gradle/gradle-8.5"
+        PATH = "${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${JAVA_HOME}/bin:${GRADLE_HOME}/bin"
     }
 
     stages {
-        stage('Environment Check') {
-            steps {
-                sh '''
-                    echo "=== Build Environment ==="
-                    echo "Java: $(java -version 2>&1 | head -n 1)"
-                    echo "Android SDK: ${ANDROID_HOME}"
-                    echo "sdk.dir=${ANDROID_HOME}" > local.properties
-                '''
-            }
-        }
-
         stage('Checkout') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    extensions: [],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/your-username/your-public-repo.git',
-                        credentialsId: ''
-                    ]]
-                ])
-                sh 'chmod +x gradlew'
+                checkout scm
             }
         }
 
-        stage('Build') {
-            parallel {
-                stage('Debug Build') {
-                    steps {
-                        sh './gradlew assembleDebug --stacktrace --no-daemon'
-                    }
-                }
-                stage('Release Build') {
-                    when { branch 'main' }
-                    steps {
-                        sh './gradlew assembleRelease --stacktrace --no-daemon'
-                    }
-                }
-            }
-        }
-
-        stage('Publish') {
+        stage('Clean') {
             steps {
-                archiveArtifacts artifacts: 'app/build/outputs/apk/**/*.apk', allowEmptyArchive: true
-                stash name: 'apks', includes: 'app/build/outputs/apk/**/*.apk'
+                sh './gradlew clean'
+            }
+        }
+
+        stage('Build Debug APK') {
+            steps {
+                sh './gradlew assembleDebug'
+            }
+        }
+
+        stage('Archive APK') {
+            steps {
+                archiveArtifacts artifacts: '**/build/outputs/apk/debug/*.apk', fingerprint: true
             }
         }
     }
 
     post {
-        success {
-            slackSend color: "good",
-                     message: "SUCCESS: ${JOB_NAME} #${BUILD_NUMBER} \nAPKs: ${BUILD_URL}artifact/"
-        }
         failure {
-            slackSend color: "danger",
-                     message: "FAILED: ${JOB_NAME} #${BUILD_NUMBER} \nLogs: ${BUILD_URL}console"
+            echo 'Build failed!'
+        }
+        success {
+            echo 'Build succeeded!'
         }
     }
 }
