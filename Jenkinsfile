@@ -3,13 +3,20 @@ pipeline {
 
     environment {
         ANDROID_HOME = "/home/ubuntu/android-sdk"
-        PATH = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}"
+        JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64"
+        GRADLE_HOME = "/opt/gradle/gradle-8.5"
+        PATH = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${PATH}"
     }
 
     stages {
-        stage('Clean') {
+        stage('Environment Check') {
             steps {
-                sh 'echo "Cleaning workspace..."'
+                sh '''
+                    echo "Java version:"
+                    java -version
+                    echo "Android SDK location: $ANDROID_HOME"
+                    echo "sdk.dir=$ANDROID_HOME" > local.properties
+                '''
             }
         }
 
