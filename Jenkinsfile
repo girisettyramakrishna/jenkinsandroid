@@ -12,30 +12,59 @@ pipeline {
         stage('Environment Check') {
             steps {
                 sh '''
+                    echo "=== Environment Variables ==="
                     echo "Java version:"
                     java -version
-                    echo "Android SDK location: $ANDROID_HOME"
+                    echo "Android SDK path: $ANDROID_HOME"
+                    echo "PATH: $PATH"
                     echo "sdk.dir=$ANDROID_HOME" > local.properties
                 '''
             }
         }
 
+        stage('Checkout') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/master']],
+                    extensions: [],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/girisettyramakrishna/jenkinsandroid.git',
+                        credentialsId: ''
+                    ]]
+                ])
+                sh 'chmod +x gradlew'
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                sh './gradlew clean'
+            }
+        }
+
         stage('Build Debug APK') {
             steps {
-                sh './gradlew assembleDebug'
+                sh './gradlew assembleDebug --stacktrace --no-daemon'
             }
         }
 
         stage('Archive APK') {
             steps {
-                archiveArtifacts artifacts: 'app/build/outputs/apk/debug/*.apk', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'app/build/outputs/apk/**/*.apk', allowEmptyArchive: true
             }
         }
     }
 
     post {
+        success {
+            echo 'Build succeeded!'
+        }
         failure {
             echo 'Build failed!'
+        }
+        always {
+            cleanWs()
         }
     }
 }
