@@ -3,13 +3,14 @@ pipeline {
 
     environment {
         ANDROID_HOME = "/home/ubuntu/android-sdk"
-        PATH+ANDROID = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
+        // Appending Android tools to PATH properly
+        PATH = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${env.PATH}"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-username/your-android-repo.git'
+                git url: 'https://github.com/girisettyramakrishna/jenkinsandroid.git'
             }
         }
 
