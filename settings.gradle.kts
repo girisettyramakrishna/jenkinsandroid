@@ -1,20 +1,17 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
-        maven("https://jitpack.io") // 🔥 Add this here
     }
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven("https://jitpack.io") // 🔥 And here too
     }
 }
 
-rootProject.name = "YourProjectName"
+rootProject.name = "MyApplication"
 include(":app")
