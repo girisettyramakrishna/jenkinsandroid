@@ -2,20 +2,42 @@ pipeline {
     agent any
 
     environment {
-        ANDROID_HOME = "/opt/android-sdk"
-        JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64"
-        GRADLE_HOME = "/opt/gradle/gradle-8.0"
+        ANDROID_HOME = "/home/ubuntu/android-sdk"
+        PATH+ANDROID = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your-username/your-android-repo.git'
+            }
+        }
+
+        stage('Set Permissions') {
+            steps {
+                sh 'chmod +x ./gradlew'
+            }
+        }
+
         stage('Build APK') {
             steps {
-                withEnv([
-                    "PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${env.PATH}"
-                ]) {
-                    sh './gradlew assembleDebug'
-                }
+                sh './gradlew assembleDebug'
             }
+        }
+
+        stage('Archive APK') {
+            steps {
+                archiveArtifacts artifacts: '**/build/outputs/apk/debug/*.apk', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ APK build successful!'
+        }
+        failure {
+            echo '❌ APK build failed.'
         }
     }
 }
