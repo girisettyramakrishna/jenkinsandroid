@@ -1,41 +1,29 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
+    id("com.android.application") version "YOUR_GRADLE_PLUGIN_VERSION" apply false
+    kotlin("android") version "YOUR_KOTLIN_VERSION" apply false
 }
 
 android {
-    namespace = "com.example.myapplication"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
-        minSdk = 24
-        targetSdk = 34
+        applicationId = "com.example.yourapp"
+        minSdk = 21
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 }
 
-// ✅ DO NOT include repositories block here
-// repositories block must be in settings.gradle.kts only
+// Note: No repositories block here!
+// Dependencies go here if needed:
+dependencies {
+    implementation(kotlin("stdlib"))
+    // other dependencies ...
+}
