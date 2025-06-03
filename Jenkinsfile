@@ -1,49 +1,35 @@
 pipeline {
     agent any
-
-    environment {
-        ANDROID_HOME = "/opt/android-sdk/latest"
-        PATH = "${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/cmdline-tools/latest/bin:${PATH}"
-    }
-
     stages {
-        stage('Prepare Workspace') {
+        stage('Checkout') {
             steps {
-                deleteDir()
                 checkout scm
             }
         }
-
         stage('Setup local.properties') {
             steps {
-                sh '''
-                    echo "sdk.dir=$ANDROID_HOME" > local.properties
-                '''
+                sh 'echo "sdk.dir=/home/psmadmin/Android/Sdk" > local.properties'
             }
         }
-
+        stage('Make Gradlew executable') {
+            steps {
+                sh 'chmod +x ./gradlew'
+            }
+        }
         stage('Build APK') {
             steps {
-                sh '''
-                    chmod +x ./gradlew
-                    ./gradlew assembleDebug
-                '''
+                sh './gradlew assembleDebug'
             }
         }
-
         stage('Archive APK') {
             steps {
-                archiveArtifacts artifacts: '**/app/build/outputs/apk/debug/*.apk', fingerprint: true
+                archiveArtifacts artifacts: '**/*.apk', fingerprint: true
             }
         }
     }
-
     post {
-        success {
-            echo '✅ Build succeeded. APK is archived.'
-        }
         failure {
-            echo '❌ Build failed. Please check the logs.'
+            echo 'Build failed. Please check the logs.'
         }
     }
 }
