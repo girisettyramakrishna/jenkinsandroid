@@ -1,24 +1,20 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
         gradlePluginPortal()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
         google()
         mavenCentral()
+        // jcenter() // deprecated, add only if you really need it
     }
 }
 
-rootProject.name = "jenkins"
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        // jcenter() // deprecated, add only if needed
+    }
+}
+
+rootProject.name = "free"  // Change this to your actual root project name if different
 include(":app")
- 
