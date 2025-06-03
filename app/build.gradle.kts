@@ -1,32 +1,47 @@
-plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0" // ✅ Required for Kotlin 2.0+
-}
+apply plugin: 'com.android.application'
 
 android {
-    compileSdk = 34
+    compileSdkVersion 34
+
     defaultConfig {
-        applicationId = "com.example.yourapp"
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        applicationId "com.example.myapplication"
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+
+        // For Kotlin projects, enable Compose compiler or other features here if needed
     }
 
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.12" // ✅ Use compatible version
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.compose.ui:ui:1.5.0")
-    implementation("androidx.compose.material:material:1.5.0")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    // ZXing core library for BarcodeFormat, WriterException
+    implementation 'com.google.zxing:core:3.5.2'
+
+    // ZXing Android Embedded (scanner UI helper)
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
+    // Apache HttpClient (legacy HTTP support)
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    // ZBar scanner (if your project uses it)
+    implementation 'me.dm7.barcodescanner:zbar:1.9.13'
+
+    // AndroidX dependencies, adjust according to your project
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Kotlin standard library if using Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+
+    // Other dependencies your project requires...
 }
