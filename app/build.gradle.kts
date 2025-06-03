@@ -1,26 +1,24 @@
 plugins {
     id("com.android.application")
-    kotlin("android") version "1.9.0" // If you use Kotlin
+    id("org.jetbrains.kotlin.android") version "2.0.21"
 }
 
 android {
-    compileSdk = 33
+    namespace = "com.example.My Application" // change this to your app's namespace
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.ramki.jenkins"
+        applicationId = "com.example.My Application" // change this
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-    }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -31,10 +29,12 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation("com.google.zxing:core:3.4.1")
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("me.dm7.barcodescanner:zbar:1.9")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
+    implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.android.material:material:1.9.0")
+
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
