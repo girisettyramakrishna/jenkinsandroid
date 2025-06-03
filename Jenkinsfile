@@ -2,27 +2,24 @@ pipeline {
     agent any
 
     environment {
-        ANDROID_HOME = "/home/ubuntu/android-sdk"
-        PATH = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${env.PATH}"
+        ANDROID_HOME = "/home/psmadmin/Android/Sdk"
+        PATH = "${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/cmdline-tools/latest/bin:${PATH}"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Prepare Workspace') {
             steps {
-                git url: 'https://github.com/girisettyramakrishna/jenkinsandroid.git'
+                // Clean previous builds
+                deleteDir()
+                // Checkout source code
+                checkout scm
             }
         }
 
-        stage('Set Permissions') {
-            steps {
-                sh 'chmod +x ./gradlew'
-            }
-        }
-
-        stage('Configure SDK') {
+        stage('Setup local.properties') {
             steps {
                 sh '''
-                    echo "sdk.dir=${ANDROID_HOME}" > local.properties
+                    echo "sdk.dir=$ANDROID_HOME" > local.properties
                 '''
             }
         }
@@ -35,17 +32,17 @@ pipeline {
 
         stage('Archive APK') {
             steps {
-                archiveArtifacts artifacts: '**/build/outputs/apk/debug/*.apk', fingerprint: true
+                archiveArtifacts artifacts: '**/app/build/outputs/apk/debug/*.apk', fingerprint: true
             }
         }
     }
 
     post {
-        success {
-            echo '✅ APK build successful!'
-        }
         failure {
-            echo '❌ APK build failed.'
+            echo 'Build failed. Please check the logs.'
+        }
+        success {
+            echo 'Build succeeded. APK is archived.'
         }
     }
 }
