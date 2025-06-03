@@ -14,6 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MyApplication"
-include(":app")
+rootProject.name = "free" // Replace with your project name
 
+// Include your modules here if any, e.g.:
+include(":app")
