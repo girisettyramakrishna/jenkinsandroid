@@ -9,9 +9,7 @@ pipeline {
     stages {
         stage('Prepare Workspace') {
             steps {
-                // Clean previous builds
                 deleteDir()
-                // Checkout source code
                 checkout scm
             }
         }
@@ -26,7 +24,10 @@ pipeline {
 
         stage('Build APK') {
             steps {
-                sh './gradlew assembleDebug'
+                sh '''
+                    chmod +x ./gradlew
+                    ./gradlew assembleDebug
+                '''
             }
         }
 
