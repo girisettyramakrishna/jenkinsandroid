@@ -3,18 +3,18 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        // jcenter() // deprecated, add only if you really need it
+        maven("https://jitpack.io") // 🔥 Add this here
     }
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {
         google()
         mavenCentral()
-        // jcenter() // deprecated, add only if needed
+        maven("https://jitpack.io") // 🔥 And here too
     }
 }
 
-rootProject.name = "free"  // Change this to your actual root project name if different
+rootProject.name = "YourProjectName"
 include(":app")
