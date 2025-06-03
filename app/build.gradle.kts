@@ -4,6 +4,8 @@ plugins {
 }
 
 android {
+    namespace = "com.example.myapplication" // <-- REQUIRED for AGP 8.0+
+
     compileSdk = 33
 
     defaultConfig {
@@ -30,7 +32,7 @@ android {
 repositories {
     google()
     mavenCentral()
-    maven("https://jitpack.io")  // Add JitPack repo here
+    maven("https://jitpack.io")
 }
 
 dependencies {
