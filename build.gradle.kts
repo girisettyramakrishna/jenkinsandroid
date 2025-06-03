@@ -1,10 +1,19 @@
-// build.gradle.kts (project-level)
-plugins {
-    // Use the Gradle plugin portal to get Android plugin version
-    id("com.android.application") version "8.1.1" apply false
-    kotlin("android") version "1.9.0" apply false
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.0.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10"
+    }
 }
 
-task("clean", Delete::class) {
-    delete(rootProject.buildDir)
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
 }
