@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         google()
         mavenCentral()
-        gradlePluginPortal()
     }
 }
 
@@ -14,7 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "free" // Replace with your project name
-
-// Include your modules here if any, e.g.:
+rootProject.name = "restaurant"
 include(":app")
