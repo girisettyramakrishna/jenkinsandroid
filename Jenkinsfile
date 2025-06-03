@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        ANDROID_HOME = "/home/psmadmin/Android/Sdk"
+        ANDROID_HOME = "/opt/android-sdk/latest"
         PATH = "${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/cmdline-tools/latest/bin:${PATH}"
     }
 
@@ -39,11 +39,11 @@ pipeline {
     }
 
     post {
-        failure {
-            echo 'Build failed. Please check the logs.'
-        }
         success {
-            echo 'Build succeeded. APK is archived.'
+            echo '✅ Build succeeded. APK is archived.'
+        }
+        failure {
+            echo '❌ Build failed. Please check the logs.'
         }
     }
 }
